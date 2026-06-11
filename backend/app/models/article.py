@@ -53,3 +53,4 @@ class Article(Base):
     # this to the current time when a new row is inserted
     # You never need to set this manually
     analyzed_at = Column(DateTime, server_default=func.now())
+    original_language = Column(String, default="en")

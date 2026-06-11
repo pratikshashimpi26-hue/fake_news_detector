@@ -76,7 +76,7 @@ function About() {
             </div>
             <div>
               <p className="text-white font-bold text-lg">Pratiksha Shimpi</p>
-              <p style={{ color: '#64748b' }} className="text-sm">Computer Engineering Student</p>
+              <p style={{ color: '#64748b' }} className="text-sm">AIML Engineering Student</p>
               <a href="https://github.com/pratikshashimpi26-hue/fake_news_detector" target="_blank" rel="noreferrer" style={{ color: '#60a5fa' }} className="text-sm hover:underline mt-1 inline-block">
                 github.com/pratikshashimpi26-hue/fake_news_detector →
               </a>

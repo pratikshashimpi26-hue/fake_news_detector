@@ -1,78 +1,52 @@
-# ── routes/predict.py ────────────────────────────────────
-# Purpose: Define the POST /predict API endpoint
-# This is where all layers connect:
-# Frontend → FastAPI → Predictor → ML Model → Database → Response
-# ─────────────────────────────────────────────────────────
-
-from fastapi import APIRouter, Depends, HTTPException
+from fastapi import APIRouter, Depends
 from sqlalchemy.orm import Session
-
-# Import database dependency
 from app.database import get_db
-
-# Import SQLAlchemy model (database table)
 from app.models.article import Article
-
-# Import Pydantic schemas (request/response shapes)
-from app.schemas.article import PredictRequest, PredictResponse
-
-# Import our ML predictor service
+from app.schemas.article import ArticleCreate, ArticleResponse
 from app.services.predictor import predict_news
+from deep_translator import GoogleTranslator
+from langdetect import detect, LangDetectException
 
-# APIRouter groups related endpoints together
-# prefix="/predict" means all routes here start with /predict
-router = APIRouter(prefix="/predict", tags=["Prediction"])
+router = APIRouter(prefix="/predict", tags=["Predict"])
 
-
-@router.post("/", response_model=PredictResponse)
-def predict_article(
-    request: PredictRequest,    # Pydantic validates incoming JSON
-    db: Session = Depends(get_db)  # FastAPI injects DB session
-):
-    """
-    Analyze a news article and predict if it is REAL or FAKE.
-
-    - Receives article text from frontend
-    - Runs it through the ML model
-    - Saves result to PostgreSQL
-    - Returns prediction with confidence score
-    """
+@router.post("/", response_model=ArticleResponse)
+def predict(article: ArticleCreate, db: Session = Depends(get_db)):
+    original_text = article.text
+    detected_lang = "en"
 
     try:
-        # Step 1: Run the ML model
-        # Pass text and optional title to predictor
-        result = predict_news(
-            text=request.text,
-            title=request.title or ""
-        )
+        detected_lang = detect(original_text)
+    except LangDetectException:
+        detected_lang = "en"
 
-        # Step 2: Save result to database
-        # Create a new Article object (maps to articles table)
-        article = Article(
-            title=request.title,
-            content=request.text,
-            source_url=request.source_url,
-            prediction=result["prediction"],
-            confidence=result["confidence"]
-        )
+    # Translate to English if not already English
+    if detected_lang != "en":
+        try:
+            translated = GoogleTranslator(
+                source="auto", target="en"
+            ).translate(original_text)
+        except Exception:
+            translated = original_text
+    else:
+        translated = original_text
 
-        # Add to database session
-        db.add(article)
+    result = predict_news(translated)
 
-        # Commit — actually writes to PostgreSQL
-        db.commit()
+    db_article = Article(
+        title=article.title or "",
+       content=original_text,
+        prediction=result["prediction"],
+        confidence=result["confidence"],
+        original_language=detected_lang,
+    )
+    db.add(db_article)
+    db.commit()
+    db.refresh(db_article)
 
-        # Refresh to get the auto-generated id and analyzed_at
-        db.refresh(article)
-
-        # Step 3: Return the saved article
-        # FastAPI uses PredictResponse schema to format this
-        return article
-
-    except Exception as e:
-        # If anything goes wrong, rollback the database transaction
-        db.rollback()
-        raise HTTPException(
-            status_code=500,
-            detail=f"Prediction failed: {str(e)}"
-        )
+    return {
+        "id": db_article.id,
+        "prediction": result["prediction"],
+        "confidence": result["confidence"],
+        "analyzed_at": db_article.analyzed_at,
+        "original_language": detected_lang,
+    }
