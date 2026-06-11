@@ -40,10 +40,9 @@ function Home() {
 
         <div className="text-center mb-10">
           <div
-            style={{ background: 'linear-gradient(135deg, #1e3a5f, #2d1b4e)' }}
-            className="inline-flex items-center justify-center w-20 h-20 rounded-2xl mb-5"
+           
           >
-            <span className="text-4xl">🧠</span>
+            <span className="text-4xl"></span>
           </div>
           <h1 className="text-4xl font-black text-white mb-3 md:text-5xl">
             Fake News Detector

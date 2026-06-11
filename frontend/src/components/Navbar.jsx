@@ -10,12 +10,11 @@ function Navbar() {
       <div className="max-w-5xl mx-auto flex items-center justify-between">
 
         <Link to="/" className="flex items-center gap-2">
-          <div style={{ background: 'linear-gradient(135deg, #3b82f6, #8b5cf6)' }}
-            className="w-8 h-8 rounded-lg flex items-center justify-center text-sm">
-            🧠
+          <div >
+            
           </div>
           <span className="text-white font-bold text-lg">
-            Fake<span style={{ color: '#3b82f6' }}>News</span>Detector
+            Fake<span> News </span>Detector
           </span>
         </Link>
 

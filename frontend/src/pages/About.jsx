@@ -23,7 +23,7 @@ function About() {
     <div style={{ background: '#0a0f1e', minHeight: '100vh' }}>
       <div className="max-w-4xl mx-auto px-4 py-12">
         <div className="text-center mb-12">
-          <span className="text-6xl">🧠</span>
+          <span className="text-6xl"></span>
           <h1 className="text-4xl font-black text-white mt-4 mb-3">About This Project</h1>
           <p style={{ color: '#64748b' }} className="text-lg max-w-xl mx-auto">
             An AI-powered full-stack web application that detects fake news using Machine Learning and NLP

@@ -51,7 +51,7 @@ function History() {
 
         <div className="mb-8">
           <h1 className="text-4xl font-black text-white mb-2">
-            📋 Prediction History
+             Prediction History
           </h1>
           <p style={{ color: '#64748b' }}>All previously analyzed articles</p>
         </div>
