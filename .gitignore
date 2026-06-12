@@ -5,8 +5,8 @@ venv/
 .env
 
 # ML artifacts (too large for Git)
-*.pkl
-backend/ml/data/
+# *.pkl
+# backend/ml/data/
 
 # Node
 node_modules/
