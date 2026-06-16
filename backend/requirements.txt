@@ -9,3 +9,4 @@ numpy==2.0.2
 scikit-learn==1.5.2
 nltk==3.9.1
 joblib==1.4.2
+deep-translator==1.11.4
